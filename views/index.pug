@@ -1,5 +1,29 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+    include mixins/restaurantCard
+  div.container
+      each restaurant in restaurants
+          +restaurantCard(restaurant)
+        div.card
+          div.card-header
+            div.backdrop
+            div.card-title Pizza Hut
+            img.card-header-image(src='https://tb-static.uber.com/prod/image-proc/processed_images/b459e72ad7b55ace5cefa4f09a1f2dcd/c73ecc27d2a9eaa735b1ee95304ba588.jpeg')
+          div.card-body
+            div.edit
+              a(href='#') Edit
+            div.card-details
+              div.category= restaurant.category
+              div.rating
+                -for(let i = 0; i<restaurant.rating; i++)
+                span &#X2b50
+            div.description=restaurant.description
+
+                  | fwghfeewgwfweuifrhg eirfgwdhgewgr
+                  | fwghfeewgwfweuifrhg eirfgwdhgewgr
+                  | fwghfeewgwfweuifrhg eirfgwdhgewgr
+                  | fwghfeewgwfweuifrhg eirfgwdhgewgr
+                  | fwghfeewgwfweuifrhg eirfgwdhgewgr
+                  | fwghfeewgwfweuifrhg eirfgwdhgewgr
+                  | fwghfeewgwfweuifrhg eirfgwdhgewgr
