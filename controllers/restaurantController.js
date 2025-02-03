@@ -1,19 +1,88 @@
-module.exports.viewAll = function(req, res, next) {
-    const restaurants =[ {
-        id: 1,
-        name: 'Pizza Hut',
-        image: 'https://tb-static.uber.com/prod/image-proc/processed_images/b459e72ad7b55ace5cefa4f09a1f2dcd/c73ecc27d2a9eaa735b1ee95304ba588.jpeg',
-        rating: 2,
-        category: 'Italian',
-        description: 'jdhsajdsei sjdhdddddd adkahsodiowques'
-    },
+const {Restaurant} = require('../models');
+const categories = ['Italian', 'Fast Food', 'Asian', 'Hispanic', 'Etc'];
+module.exports.viewAll = async function (req, res,) {
+    let searchCategories = ['All'];
+    for(let i = 0; i < categories.length; i++) {
+        searchCategories.push(categories[i]);
+    }
+    let restaurants;
+    let searchCategory = req.query.category || 'All';
+    let searchRandom = req.query.random || false;
+    if(searchCategory === 'All'){
+        restaurants = await Restaurant.findAll();
+    } else {
+        restaurants = await Restaurant.findAll({
+            where: {
+                category: searchCategory
+            }
+        });
+    }
+    if(restaurants.length > 0 && searchRandom){
+        let randomIndex = getRandomInt(restaurants.length);
+        restaurants = [restaurants[randomIndex]];
+    }
+    res.render('index', {restaurants, categories: searchCategories, searchCategory, searchRandom});
+}
+
+
+module.exports.renderEditForm = async function (req, res, next) {
+    const restaurant = await Restaurant.findByPk(
+        req.params.id
+    );
+    res.render('edit', {restaurant, categories});
+}
+
+module.exports.updateRestaurant = async function (req, res) {
+    await Restaurant.update(
+            {
+            name: req.body.name,
+            category: req.body.category,
+            rating: req.body.rating,
+            image: req.body.image,
+            description: req.body.description
+        },
+            {
+            where:
+                {
+                    id: req.params.id
+                }
+        });
+    res.redirect('/');
+}
+
+module.exports.deleteRestaurant = async function (req, res) {
+    await Restaurant.destroy({
+        where:
+            {
+                id: req.params.id
+            }
+    });
+    res.redirect('/');
+}
+
+
+module.exports.renderAddForm = async function (req, res) {
+    const restaurant = {
+        name: "",
+        description: "",
+        rating: 1,
+        image: "",
+        category: categories[0]
+    };
+    res.render('add', {restaurant, categories});
+}
+
+module.exports.addRestaurant = async function (req, res) {
+    await Restaurant.create(
         {
-            id: 2,
-            name: 'Pizza Hut',
-            image: 'https://tb-static.uber.com/prod/image-proc/processed_images/b459e72ad7b55ace5cefa4f09a1f2dcd/c73ecc27d2a9eaa735b1ee95304ba588.jpeg',
-            rating: 4,
-            category: 'Italian',
-            description: 'jdhsajdsei',
-        }];
-    res.render('index', { title: 'Express' });
+            name: req.body.name,
+            category: req.body.category,
+            rating: req.body.rating,
+            image: req.body.image,
+            description: req.body.description
+        });
+    res.redirect('/');
+}
+function getRandomInt(max){
+    return Math.floor(Math.random() * max);
 }

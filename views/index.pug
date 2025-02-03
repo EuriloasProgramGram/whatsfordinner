@@ -1,29 +1,21 @@
 extends layout
 
 block content
-    include mixins/restaurantCard
+  include mixins/restaurantCard
   div.container
-      each restaurant in restaurants
-          +restaurantCard(restaurant)
-        div.card
-          div.card-header
-            div.backdrop
-            div.card-title Pizza Hut
-            img.card-header-image(src='https://tb-static.uber.com/prod/image-proc/processed_images/b459e72ad7b55ace5cefa4f09a1f2dcd/c73ecc27d2a9eaa735b1ee95304ba588.jpeg')
-          div.card-body
-            div.edit
-              a(href='#') Edit
-            div.card-details
-              div.category= restaurant.category
-              div.rating
-                -for(let i = 0; i<restaurant.rating; i++)
-                span &#X2b50
-            div.description=restaurant.description
-
-                  | fwghfeewgwfweuifrhg eirfgwdhgewgr
-                  | fwghfeewgwfweuifrhg eirfgwdhgewgr
-                  | fwghfeewgwfweuifrhg eirfgwdhgewgr
-                  | fwghfeewgwfweuifrhg eirfgwdhgewgr
-                  | fwghfeewgwfweuifrhg eirfgwdhgewgr
-                  | fwghfeewgwfweuifrhg eirfgwdhgewgr
-                  | fwghfeewgwfweuifrhg eirfgwdhgewgr
+    form(action='/' method='get')
+        div.form-input
+            label(for='category') Category
+            select(id='category' name='category' autocomplete='off')
+                each category in categories
+                    option(value=category selected = (category === searchCategory)) #{category}
+            div.form-input
+                label(for='random') Random
+                input(type='checkbox' name='random' id='random' checked=searchRandom)
+        button.button.save(type='submit') Filter
+  div.container
+    div.add-button-row
+        a.button.save(href="/add") Add Restaurant
+  div.container
+    each restaurant in restaurants
+        +restaurantCard(restaurant)
